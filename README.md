@@ -2,7 +2,7 @@
 * 1. [rbenvのインストール](#rbenv)
 * 2. [gemのversion管理](#gem_version)
 * 3. [rails new](#rails_new)
-* 4. [rails db:create](#rails_db:create)
+* 4. [rails db:create](#rails_db_create)
 * 5. [rails g(generate) model Hoge](#rails_g_model_Hoge)
 * 6. [rails g(generate) controller hoges](#rails_g_controller_hoges)
 * 7. [apiサーバ作成](#api_server)
@@ -149,7 +149,7 @@ bundle config --local build.mysql2 "--with-ldflags=-L/usr/local/opt/openssl@1.1/
 
 - `bundle install`を行います．
 
-## <a name='rails_db:create'></a>rails db:create
+## <a name='rails_db_create'></a>rails db:create
 - config/database.yml に適切な情報を入力します．
 
 このファイルにはsecretを載せないようにします．例えば，.envファイルを作成し，`dotenv-rails`を用いて環境変数から取得するようにします．

@@ -1,6 +1,13 @@
 # ruby-on-rails-api-server
+* 1. [rbenvのインストール](#rbenv)
+* 2. [gemのversion管理](#gem_version)
+* 3. [rails new](#rails_new)
+* 4. [rails db:create](#rails_db:create)
+* 5. [rails g(generate) model Hoge](#rails_g_model_Hoge)
+* 6. [rails g(generate) controller hoges](#rails_g_controller_hoges)
+* 7. [apiサーバ作成](#api_server)
 
-## rbenvのインストール
+## <a name='rbenv'></a>rbenvのインストール
 rubyのversion管理を行う [rbenv](https://github.com/rbenv/rbenv) をインストールします．
 
 - まず，後々の比較のためにrubyのversionとインストール先を調べます．
@@ -56,7 +63,7 @@ echo $PATH
 source ~/.zshrc
 ```
 
-## gemのversion管理
+## <a name='gem_version'></a>gemのversion管理
 gemは次のようにインストールすることができます．
 
 ```
@@ -119,7 +126,7 @@ gem list
 
 以上2つのコマンドを用いて，`"rails", "6.0.3.6"` が，プロジェクトにはインストールされているが，システムにはインストールされていないことを確認することができます．
 
-## rails new
+## <a name='rails_new'></a>rails new
 - `rails new`を行い，railsプロジェクトを作成します．
 
 ```
@@ -142,7 +149,7 @@ bundle config --local build.mysql2 "--with-ldflags=-L/usr/local/opt/openssl@1.1/
 
 - `bundle install`を行います．
 
-## rails db:create
+## <a name='rails_db:create'></a>rails db:create
 - config/database.yml に適切な情報を入力します．
 
 このファイルにはsecretを載せないようにします．例えば，.envファイルを作成し，`dotenv-rails`を用いて環境変数から取得するようにします．
@@ -153,7 +160,7 @@ bundle config --local build.mysql2 "--with-ldflags=-L/usr/local/opt/openssl@1.1/
 bundle exec rails db:create
 ```
 
-## rails g(generate) model Hoge
+## <a name='rails_g_model_Hoge'></a>rails g(generate) model Hoge
 - モデルを生成します．
 
 例えば，`users`テーブルを生成したい場合は，以下のようにします．
@@ -185,7 +192,7 @@ end
 bundle exec rails db:migrate
 ```
 
-## rails g(generate) controller hoges
+## <a name='rails_g_controller_hoges'></a>rails g(generate) controller hoges
 - コントローラーを生成します．
 
 例えば，`users_controller`を生成したい場合は，以下のようにします．
@@ -195,7 +202,7 @@ bundle exec rails g controller users
 ```
 このコマンドにより，`app/controllers/users_controller.rb`が生成されます．
 
-## apiサーバ作成
+## <a name='api_server'></a>apiサーバ作成
 - `config/routes.rb`を変更
 
 以下のようにします．

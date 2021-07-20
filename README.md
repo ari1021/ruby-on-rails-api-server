@@ -184,3 +184,35 @@ end
 ```
 bundle exec rails db:migrate
 ```
+
+## rails g(generate) controller hoges
+- コントローラーを生成します．
+
+例えば，`users_controller`を生成したい場合は，以下のようにします．
+
+```
+bundle exec rails g controller users
+```
+このコマンドにより，`app/controllers/users_controller.rb`が生成されます．
+
+## apiサーバ作成
+- `config/routes.rb`を変更
+
+以下のようにします．
+
+```ruby
+{method} "{path}", to: "{controller}#{action}"
+```
+例えば，`GET /users`で`users_controller.index`を呼び出したければ，
+
+```ruby
+get "/users", to: "users#index"
+```
+とします．
+
+- `app/controllers`を変更
+
+クラスメソッドとして，actionを追加していきます．
+jsonを返すには，`render json:`を使えば良いです．
+
+- `app/models`を変更

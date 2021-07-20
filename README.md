@@ -118,3 +118,26 @@ gem list
 ```
 
 以上2つのコマンドを用いて，`"rails", "6.0.3.6"` が，プロジェクトにはインストールされているが，システムにはインストールされていないことを確認することができます．
+
+## rails new
+- `rails new`を行い，railsプロジェクトを作成します．
+
+```
+bundle exec rails new . -B -d mysql --skip-test --api
+```
+
+- configに情報を追加します．
+
+```
+brew info openssl
+```
+を叩き，`For compilers to find openssl you may need to set:`のところを見ます．
+
+そこに書いてある情報を用いて，
+
+```
+bundle config --local build.mysql2 "--with-ldflags=-L/usr/local/opt/openssl@1.1/lib"
+```
+のようにします．
+
+- `bundle install`を行います．

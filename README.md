@@ -141,3 +141,46 @@ bundle config --local build.mysql2 "--with-ldflags=-L/usr/local/opt/openssl@1.1/
 のようにします．
 
 - `bundle install`を行います．
+
+## rails db:create
+- config/database.yml に適切な情報を入力します．
+
+このファイルにはsecretを載せないようにします．例えば，.envファイルを作成し，`dotenv-rails`を用いて環境変数から取得するようにします．
+
+- `rails db:create`を行い，dbを作成します．
+
+```
+bundle exec rails db:create
+```
+
+## rails g(generate) model Hoge
+- モデルを生成します．
+
+例えば，`users`テーブルを生成したい場合は，以下のようにします．
+
+```
+bundle exec rails g model User
+```
+このコマンドにより，`app/models/user.rb`と`db/migrate/{年月日など}.rb`が生成されます．
+
+- migrationファイルを変更します．
+
+例えば，`users`テーブルに，name, age という2つのカラムを追加したい場合は，以下のようにmigrationファイルを変更します．
+
+```ruby
+class CreateUsers < ActiveRecord::Migration[6.0]
+  def change
+    create_table :users do |t|
+      t.string :name, null: false
+      t.integer :age, null: false
+      t.timestamps
+    end
+  end
+end
+```
+
+- テーブルを作成します．
+
+```
+bundle exec rails db:migrate
+```

@@ -38,6 +38,13 @@ rescue ZeroDivisionError => e
 end
 ```
 
+### arrayへのアクセス
+`[0]`や`[-1]`のようにアクセスするのではなく，`first`や`last`を使うことが推奨されている．
+
+https://github.com/rubocop/ruby-style-guide#first-and-last
+
+ruby自体には`second`や`third`は入っていない(昔は入っていたが今はない)が，ActiveRecordにはいまだに実装されているので使えたりする．
+
 ### xx ? yy : zz
 
 ```ruby
@@ -282,3 +289,164 @@ end
 また，`before`を用いることで，前処理を書くことができる．
 
 さらに，モックを使いたい場合は，`double`でモックを作成し，`allow`でモックのメソッドを設定することができる．
+
+#### db周りのテスト
+[factory bot](https://github.com/thoughtbot/factory_bot)を用いてテストデータを用意する．
+
+```ruby
+FactoryBot.define do
+  factory :hoge do
+    name { "hoge_name" }
+    age { 20 }
+    email { "hoge@hoge.com" }
+  end
+end
+```
+その後，`let(:hoge) { create(:hoge) }`のようにテストデータを生成すれば良い．
+
+#### serializerのテスト
+単純にserializerを`new`で生成して，データを確認すれば良い．
+
+(`ActiveModelSerializers.config.adapter = ActiveModelSerializers::Adapter::JsonApi`とする)
+
+```ruby
+# Table name: hoges
+# id
+# name
+# age
+# email
+# created_at
+
+class HogeSerializer < ActiveModel::Serializer
+    attribute :name
+    attribute :email
+end
+```
+このserializerに対しては，以下のようなテストを書けば良い．
+
+```ruby
+RSpec.describe HogeSerializer do
+  let(:serialization) { HogeSerializer.new(hoge) }
+  let(:hoge) { create(:hoge) }
+
+  subject { JSON.parse serialization.to_json }
+  describe "attributes" do
+    it "nameが正常に取得できる" do
+      expect(subject["name"]).to eq "hoge_name"
+    end
+    it "ageが正常に取得できる" do
+      expect(subject["age"]).to eq 20
+    end
+    it "emailが正常に取得できる" do
+      expect(subject["email"]).to eq "hoge@hoge.com"
+    end
+  end
+end
+```
+
+#### controllerのテスト
+request specを用いれば良い．
+
+```ruby
+RSpec.describe "HogeController", type: :request do
+  subject do
+    get "/hoges", headers: headers
+  end
+
+  let(:headers) do
+    {
+      "x-token": access_token,
+    }
+  end
+  let(:hoges) { create_list(:hoge, 2) }
+
+  describe "#index" do
+    describe "response code" do
+      context "access_tokenが不正な場合" do
+        let(:access_token) { "invalid_access_token" }
+        it "401であること" do
+          subject
+          expect(response.status).to eq(401)
+        end
+      end
+      context "正常なaccess_tokenを利用している場合" do
+        let(:access_token) { "valid_access_token" }
+        it "200であること" do
+          subject
+          expect(response.status).to eq(200)
+        end
+      end
+    end
+
+    describe "response body" do
+      let(:access_token) { "valid_access_token" }
+      let(:response_json) { JSON.parse(response.body) }
+      describe "data" do
+        # meta dataとかのテストを書いてもok
+        # eg. describe "meta data" do ---- end
+        describe "first data" do
+          let(:res_data) { response_data.first }
+          it "idが正常に取得できること" do
+            subject
+            expect(res_data["id"]).to eq hoges.first.id
+          end
+          it "typeが正常に取得できること" do
+            subject
+            expect(res_data["type"]).to eq "hoges"
+          end
+          describe "attribute" do
+            let(:res_attribute) { res_data["attributes"] }
+            it "nameが正常に取得できること" do
+              subject
+              expect(res_attribute["name"]).to eq hoges.first.name
+            end
+            it "ageが正常に取得できること" do
+              subject
+              expect(res_attribute["age"]).to eq hoges.first.age
+            end
+            it "emailが正常に取得できること" do
+              subject
+              expect(res_attribute["email"]).to eq hoges.first.email
+            end
+            it "created_atが正常に取得できること" do
+              subject
+              expect(res_attribute["created_at"]).to eq hoges.first.created_at
+            end
+          end
+        end
+
+        describe "second data" do
+          let(:res_data) { response_data.second }
+          it "idが正常に取得できること" do
+            subject
+            expect(res_data["id"]).to eq hoges.second.id
+          end
+          it "typeが正常に取得できること" do
+            subject
+            expect(res_data["type"]).to eq "hoges"
+          end
+          describe "attribute" do
+            let(:res_attribute) { res_data["attributes"] }
+            it "nameが正常に取得できること" do
+              subject
+              expect(res_attribute["name"]).to eq hoges.second.name
+            end
+            it "ageが正常に取得できること" do
+              subject
+              expect(res_attribute["age"]).to eq hoges.second.age
+            end
+            it "emailが正常に取得できること" do
+              subject
+              expect(res_attribute["email"]).to eq hoges.second.email
+            end
+            it "created_atが正常に取得できること" do
+              subject
+              expect(res_attribute["created_at"]).to eq hoges.second.created_at
+            end
+          end
+        end
+      end
+    end
+  end
+end
+```

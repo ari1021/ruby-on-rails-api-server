@@ -1,3 +1,12 @@
+### rufo
+rufoを用いる場合，デフォルトがダブルクウォーテーションとなっている．
+
+シングルクウォーテーションに直したければ，.rufoファイルを作成すれば良い．
+
+```txt: .rufo
+quote_style :single
+```
+
 ### return省略
 メソッドはreturnを書かなくても最後の式がreturnされる．
 
@@ -13,6 +22,20 @@ end
 #     return a + b
 # end
 ```
+
+### 不要なブロック省略
+
+```ruby
+if hoge
+    return fuga
+end
+```
+は，
+
+```ruby
+return fuga if hoge
+```
+と書くことができる．
 
 ### メソッド呼び出し
 引数がないメソッドは`()`なしで呼び出すことができる．
@@ -43,7 +66,7 @@ end
 
 https://github.com/rubocop/ruby-style-guide#first-and-last
 
-ruby自体には`second`や`third`は入っていない(昔は入っていたが今はない)が，ActiveRecordにはいまだに実装されているので使えたりする．
+ruby自体には`second`や`third`は入っていない(昔は入っていたが今はない)が，ActiveSupportには入っているので，大体使える．
 
 ### xx ? yy : zz
 
@@ -55,6 +78,20 @@ else
 end
 ```
 と同じ．
+
+
+### &:
+
+```ruby
+hoges.map{ |item| item[:fuga] }
+```
+は，以下のように書くことができる．
+
+```ruby
+hoges.map(&:fuga)
+```
+
+また，`&:`を用いた方が処理速度が速いらしい．
 
 ### freeze
 immutableな変数にすることができる．
